@@ -1,0 +1,15 @@
+{
+    "id": "jobs",
+    "name": "Jobs",
+    "version": "1.0.0",
+    "description": "Staff application system with a customizable form and processing workflow.",
+    "url": "",
+    "authors": [
+        "Bricec6"
+    ],
+    "azuriom_api": "1.2.0",
+    "providers": [
+        "\\Azuriom\\Plugin\\Jobs\\Providers\\JobsServiceProvider",
+        "\\Azuriom\\Plugin\\Jobs\\Providers\\RouteServiceProvider"
+    ]
+}

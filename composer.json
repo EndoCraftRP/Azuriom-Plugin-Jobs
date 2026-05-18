@@ -1,0 +1,18 @@
+{
+    "name": "azuriom/jobs",
+    "description": "Staff application system with a customizable form and processing workflow.",
+    "type": "azuriom-plugin",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Azuriom\\Plugin\\Jobs\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.0"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "platform-check": false
+    }
+}

@@ -1,0 +1,5 @@
+/vendor/
+/versions
+.idea/
+.vscode/
+.DS_Store
