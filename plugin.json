@@ -1,7 +1,7 @@
 {
     "id": "jobs",
     "name": "Jobs",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Staff application system with a customizable form and processing workflow.",
     "url": "",
     "authors": [
