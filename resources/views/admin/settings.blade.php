@@ -8,7 +8,7 @@
             <form method="POST" action="{{ route('jobs.admin.settings.update') }}">
                 @csrf
                 <div class="mb-3">
-                    <label class="form-label">Discord webhook URL</label>
+                    <label class="form-label">{{ trans('jobs::messages.admin.settings.discord_webhook_url') }}</label>
                     <input class="form-control" name="discord_webhook_url" value="{{ old('discord_webhook_url', setting('jobs.discord_webhook_url')) }}">
                 </div>
                 <button class="btn btn-primary">{{ trans('messages.actions.save') }}</button>

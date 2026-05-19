@@ -22,10 +22,10 @@
                                 </div>
                             @endif
                             @if($position->show_applications_count)
-                                <div class="small text-muted mb-2">{{ $position->applications_count ?? $position->active_applications_count }} candidatures</div>
+                                <div class="small text-muted mb-2">{{ $position->applications_count ?? $position->active_applications_count }} {{ trans('jobs::messages.applications_count_label') }}</div>
                             @endif
                             @if(! $position->is_open)
-                                <span class="badge bg-secondary mb-2">Fermé</span>
+                                <span class="badge bg-secondary mb-2">{{ trans('jobs::messages.closed_badge') }}</span>
                             @endif
                             <a href="{{ route('jobs.show', $position) }}" class="btn btn-primary d-block mt-auto">{{ trans('jobs::messages.apply') }}</a>
                         </div>

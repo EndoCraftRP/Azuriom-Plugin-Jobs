@@ -91,14 +91,14 @@ class ApplicationController extends Controller
             try {
                 Http::post($webhook, [
                     'embeds' => [[
-                        'title' => 'Nouvelle candidature - '.$position->translatedName(),
+                        'title' => trans('jobs::messages.discord.new_application_title', ['position' => $position->translatedName()]),
                         'color' => 16776960,
                         'fields' => [
-                            ['name' => 'Joueur', 'value' => Auth::user()->name, 'inline' => true],
-                            ['name' => 'Poste', 'value' => $position->translatedName(), 'inline' => true],
+                            ['name' => trans('jobs::messages.discord.user_field'), 'value' => Auth::user()->name, 'inline' => true],
+                            ['name' => trans('jobs::messages.discord.position_field'), 'value' => $position->translatedName(), 'inline' => true],
                         ],
                         'timestamp' => now()->toIso8601String(),
-                        'footer' => ['text' => 'Jobs - '.site_name()],
+                        'footer' => ['text' => trans('jobs::messages.discord.footer', ['site' => site_name()])],
                     ]],
                 ]);
             } catch (\Throwable $e) {

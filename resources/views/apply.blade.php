@@ -37,7 +37,7 @@
                                 <input type="number" name="field_{{ $field->id }}" class="form-control" value="{{ old('field_'.$field->id) }}">
                             @elseif($field->type === 'select')
                                 <select name="field_{{ $field->id }}" class="form-select">
-                                    <option value="">---</option>
+                                    <option value="">{{ trans('jobs::messages.select_placeholder') }}</option>
                                     @foreach($field->options ?? [] as $option)
                                         <option value="{{ $option }}" @selected(old('field_'.$field->id) === $option)>{{ $option }}</option>
                                     @endforeach
