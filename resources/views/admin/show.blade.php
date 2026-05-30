@@ -42,11 +42,9 @@
                         </div>
                         <button class="btn btn-primary">{{ trans('jobs::messages.update_status') }}</button>
                     </form>
-                    <form method="POST" action="{{ route('jobs.admin.applications.destroy', $application) }}" class="mt-3">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-danger" data-confirm="delete">{{ trans('messages.actions.delete') }}</button>
-                    </form>
+                    <a class="btn btn-danger mt-3" href="{{ route('jobs.admin.applications.destroy', $application) }}" data-confirm="delete">
+                        {{ trans('messages.actions.delete') }}
+                    </a>
                 </div>
             </div>
         </div>

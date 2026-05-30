@@ -13,7 +13,7 @@
             <form action="{{ route('jobs.cancel', $application) }}" method="POST" class="mt-3">
                 @csrf
                 @method('DELETE')
-                <button class="btn btn-outline-danger" data-confirm="delete">{{ trans('jobs::messages.cancel_application') }}</button>
+                <button type="submit" class="btn btn-outline-danger">{{ trans('jobs::messages.cancel_application') }}</button>
             </form>
         @endif
 

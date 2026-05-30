@@ -16,11 +16,9 @@
                         <td>{{ $position->applications_count }}</td>
                         <td>
                             <a class="btn btn-sm btn-primary" href="{{ route('jobs.admin.positions.edit', $position) }}">{{ trans('messages.actions.edit') }}</a>
-                            <form method="POST" action="{{ route('jobs.admin.positions.destroy', $position) }}" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-sm btn-danger" data-confirm="delete">{{ trans('messages.actions.delete') }}</button>
-                            </form>
+                            <a class="btn btn-sm btn-danger" href="{{ route('jobs.admin.positions.destroy', $position) }}" data-confirm="delete">
+                                {{ trans('messages.actions.delete') }}
+                            </a>
                         </td>
                     </tr>
                 @endforeach
