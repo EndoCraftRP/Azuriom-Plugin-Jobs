@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('position_id')->constrained('jobs_apply_positions')->cascadeOnDelete();
             $table->string('label', 200);
-            $table->enum('type', ['text', 'textarea', 'number', 'select', 'checkbox']);
+            $table->string('type');
             $table->json('options')->nullable();
             $table->boolean('is_required')->default(true);
             $table->unsignedTinyInteger('col_md')->default(12);

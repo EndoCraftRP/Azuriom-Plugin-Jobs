@@ -14,6 +14,11 @@
                 'is_required' => $f->is_required,
                 'options' => implode("\n", $f->options ?? []),
                 'col_md' => $f->col_md ?? 12,
+                'allow_other' => $f->option('allow_other', false),
+                'min' => $f->option('min', ''),
+                'max' => $f->option('max', ''),
+                'regex' => $f->option('regex', ''),
+                'html' => $f->option('html', ''),
             ];
         })->values();
     @endphp
