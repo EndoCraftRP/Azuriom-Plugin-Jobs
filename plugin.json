@@ -1,11 +1,12 @@
 {
     "id": "jobs",
     "name": "Jobs",
-    "version": "1.0.3",
+    "version": "1.2.0",
     "description": "Staff application system with a customizable form and processing workflow.",
     "url": "https://market.azuriom.com/resources/212",
     "authors": [
-        "Bricec6"
+        "Bricec6",
+        "kuani"
     ],
     "azuriom_api": "1.2.0",
     "providers": [
