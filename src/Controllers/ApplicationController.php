@@ -159,10 +159,10 @@ class ApplicationController extends Controller
             if ($field->type === 'date_range') {
                 $start = $validated[$key.'_start'] ?? null;
                 $end = $validated[$key.'_end'] ?? null;
-                $answers[$field->id] = ($start && $end) ? "From {$start} to {$end}" : null;
+                $answers[$field->id] = ($start && $end) ? trans('jobs::messages.from_to_format', ['start' => $start, 'end' => $end]) : null;
             } elseif (($field->type === 'select' || $field->type === 'radio') && ($validated[$key] ?? null) === 'other') {
                 $otherVal = $validated[$key.'_other'] ?? '';
-                $answers[$field->id] = 'Other: ' . $otherVal;
+                $answers[$field->id] = trans('jobs::messages.other_format', ['value' => $otherVal]);
             } elseif ($field->type === 'checkbox') {
                 $choices = $validated[$key] ?? [];
                 if (!is_array($choices)) {
@@ -172,7 +172,7 @@ class ApplicationController extends Controller
                 foreach ($choices as $choice) {
                     if ($choice === 'other') {
                         $otherVal = $request->input($key.'_other') ?? '';
-                        $formatted[] = 'Other: ' . $otherVal;
+                        $formatted[] = trans('jobs::messages.other_format', ['value' => $otherVal]);
                     } else {
                         $formatted[] = $choice;
                     }

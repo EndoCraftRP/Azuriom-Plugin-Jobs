@@ -66,6 +66,8 @@ return [
     'end_date' => 'Date de fin',
     'other_placeholder' => 'Veuillez préciser...',
     'validation_other_required' => 'Le champ "Autre" est obligatoire lorsque "Autre" est sélectionné.',
+    'from_to_format' => 'Du :start au :end',
+    'other_format' => 'Autre : :value',
     'positions' => [
         'form' => [
             'name' => 'Nom',

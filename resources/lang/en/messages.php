@@ -66,6 +66,8 @@ return [
     'end_date' => 'End Date',
     'other_placeholder' => 'Please specify...',
     'validation_other_required' => 'The other field is required when other is selected.',
+    'from_to_format' => 'From :start to :end',
+    'other_format' => 'Other: :value',
     'positions' => [
         'form' => [
             'name' => 'Name',
