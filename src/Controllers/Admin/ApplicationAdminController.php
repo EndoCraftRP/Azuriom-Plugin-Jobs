@@ -44,6 +44,7 @@ class ApplicationAdminController extends Controller
         $application->update([
             'status' => $request->input('status'),
             'admin_note' => $request->input('admin_note'),
+            'public_note' => $request->input('public_note'),
             'reviewed_by' => auth()->id(),
             'reviewed_at' => now(),
         ]);

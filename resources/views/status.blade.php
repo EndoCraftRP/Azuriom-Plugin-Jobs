@@ -17,6 +17,15 @@
             </form>
         @endif
 
+        @if($application->public_note)
+            <div class="card my-3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ trans('jobs::messages.public_note') }}</h5>
+                    <p class="card-text">{!! nl2br(e($application->public_note)) !!}</p>
+                </div>
+            </div>
+        @endif
+
         <hr>
         <h5>{{ trans('jobs::messages.answers_title') }}</h5>
         @foreach($application->position->fields as $field)

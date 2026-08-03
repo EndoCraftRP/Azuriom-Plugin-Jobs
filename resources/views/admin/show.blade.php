@@ -129,6 +129,10 @@
                             <label class="form-label">{{ trans('jobs::messages.admin_note') }}</label>
                             <textarea class="form-control" name="admin_note" rows="5">{{ old('admin_note', $application->admin_note) }}</textarea>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">{{ trans('jobs::messages.public_note') }}</label>
+                            <textarea class="form-control" name="public_note" rows="5">{{ old('public_note', $application->public_note) }}</textarea>
+                        </div>
                         <button class="btn btn-primary">{{ trans('jobs::messages.update_status') }}</button>
                     </form>
                     <a class="btn btn-danger mt-3" href="{{ route('jobs.admin.applications.destroy', $application) }}" data-confirm="delete">

@@ -39,7 +39,7 @@ class Application extends Model
 
     protected $prefix = 'jobs_apply_';
 
-    protected $fillable = ['position_id', 'user_id', 'answers', 'status', 'admin_note', 'reviewed_by', 'reviewed_at'];
+    protected $fillable = ['position_id', 'user_id', 'answers', 'status', 'admin_note', 'public_note', 'reviewed_by', 'reviewed_at'];
 
     protected $casts = ['answers' => 'array', 'reviewed_at' => 'datetime'];
 

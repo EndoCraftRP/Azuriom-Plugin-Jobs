@@ -20,6 +20,7 @@ return [
     'status_accepted' => 'Acceptée',
     'status_refused' => 'Refusée',
     'admin_note' => 'Note interne (non visible du candidat)',
+    'public_note' => 'Remarques / Note publique (visible par le candidat)',
     'update_status' => 'Mettre à jour le statut',
     'deleted' => 'Candidature supprimée.',
     'status_updated' => 'Statut mis à jour.',

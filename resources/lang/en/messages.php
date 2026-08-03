@@ -20,6 +20,7 @@ return [
     'status_accepted' => 'Accepted',
     'status_refused' => 'Refused',
     'admin_note' => 'Internal note (not visible to applicant)',
+    'public_note' => 'Remarks / Public note (visible to applicant)',
     'update_status' => 'Update status',
     'deleted' => 'Application deleted.',
     'status_updated' => 'Status updated.',
