@@ -112,6 +112,10 @@
                 <!-- Attachment specific configuration -->
                 <div class="mb-2 attachment-wrap d-none border rounded p-2 bg-light">
                     <h6>Attachment Settings</h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" data-name="allow_urls" checked>
+                        <label class="form-check-label small font-weight-bold">Allow hybrid URL input method (Image URL, YouTube video URL)</label>
+                    </div>
                     <div class="mb-2">
                         <label class="form-label small">Permitted file extensions (comma separated, e.g. pdf, jpg, png)</label>
                         <input type="text" class="form-control form-control-sm" data-name="allowed_extensions" placeholder="pdf, jpg, png">

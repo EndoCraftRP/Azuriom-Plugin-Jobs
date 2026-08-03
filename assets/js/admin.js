@@ -28,6 +28,7 @@
     const allowedExtensions = setName('[data-name="allowed_extensions"]', 'allowed_extensions');
     const maxFiles = setName('[data-name="max_files"]', 'max_files');
     const maxSize = setName('[data-name="max_size"]', 'max_size');
+    const allowUrls = setName('[data-name="allow_urls"]', 'allow_urls');
 
     if (id) id.value = item.id ?? '';
     if (label) label.value = item.label ?? '';
@@ -43,6 +44,7 @@
     if (allowedExtensions) allowedExtensions.value = item.allowed_extensions ?? '';
     if (maxFiles) maxFiles.value = item.max_files ?? '';
     if (maxSize) maxSize.value = item.max_size ?? '';
+    if (allowUrls) allowUrls.checked = item.allow_urls ?? true;
 
     const wrapOptions = node.querySelector('.options-wrap');
     const wrapAllowOther = node.querySelector('.allow-other-wrap');

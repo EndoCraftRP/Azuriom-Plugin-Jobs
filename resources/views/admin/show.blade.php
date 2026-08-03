@@ -72,8 +72,8 @@
                                                                 $isImageUrl = preg_match('/\.(jpg|jpeg|png|webp|gif|svg)$/i', $url) || preg_match('/imgur\.com/i', $url);
                                                             @endphp
                                                             @if($isYoutube)
-                                                                <div class="ratio ratio-16x9 mb-2" style="height: 120px;">
-                                                                    <iframe src="{{ $ytEmbedUrl }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                                                <div class="ratio ratio-16x9 mb-2" style="position: relative; overflow: hidden; padding-top: 56.25%;">
+                                                                    <iframe src="{{ $ytEmbedUrl }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
                                                                 </div>
                                                             @elseif($isImageUrl)
                                                                 <div class="text-center mb-2 bg-dark rounded d-flex align-items-center justify-content-center" style="height: 120px;">

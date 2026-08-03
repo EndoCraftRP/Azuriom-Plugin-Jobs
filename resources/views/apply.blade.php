@@ -118,9 +118,10 @@
                                     <div class="attachment-field-container border rounded p-3 bg-light"
                                          id="attachment_container_{{ $field->id }}"
                                          data-field-id="{{ $field->id }}"
-                                         data-max-files="{{ $field->option('max_files') ?? 5 }}"
-                                         data-max-size="{{ $field->option('max_size') ?? 5 }}"
-                                         data-allowed-extensions="{{ $field->option('allowed_extensions') ?? 'pdf,jpg,png,jpeg' }}"
+                                         data-max-files="{{ $field->option('max_files') ?: 5 }}"
+                                         data-max-size="{{ $field->option('max_size') ?: 5 }}"
+                                         data-allowed-extensions="{{ $field->option('allowed_extensions') ?: 'pdf,jpg,png,jpeg' }}"
+                                         data-allow-urls="{{ $field->option('allow_urls', true) ? 'true' : 'false' }}"
                                          data-msg-limit-reached="{{ trans('jobs::messages.limit_reached') }}"
                                          data-msg-size-exceeded="{{ trans('jobs::messages.size_limit_exceeded') }}"
                                          data-msg-invalid-extension="{{ trans('jobs::messages.invalid_extension') }}"
@@ -137,9 +138,9 @@
                                         <!-- Limit info -->
                                         <div class="mb-3 text-muted small">
                                             {{ trans('jobs::messages.attachment_limits', [
-                                                'max_files' => $field->option('max_files') ?? 5,
-                                                'max_size' => $field->option('max_size') ?? 5,
-                                                'extensions' => $field->option('allowed_extensions') ?? 'pdf,jpg,png,jpeg'
+                                                'max_files' => $field->option('max_files') ?: 5,
+                                                'max_size' => $field->option('max_size') ?: 5,
+                                                'extensions' => $field->option('allowed_extensions') ?: 'pdf,jpg,png,jpeg'
                                             ]) }}
                                         </div>
 
@@ -148,9 +149,11 @@
                                             <button type="button" class="btn btn-sm btn-outline-primary upload-btn">
                                                 <i class="bi bi-file-earmark-arrow-up"></i> {{ trans('jobs::messages.upload_file') }}
                                             </button>
-                                            <button type="button" class="btn btn-sm btn-outline-secondary add-url-btn">
-                                                <i class="bi bi-link-45deg"></i> {{ trans('jobs::messages.add_url') }}
-                                            </button>
+                                            @if($field->option('allow_urls', true))
+                                                <button type="button" class="btn btn-sm btn-outline-secondary add-url-btn">
+                                                    <i class="bi bi-link-45deg"></i> {{ trans('jobs::messages.add_url') }}
+                                                </button>
+                                            @endif
                                         </div>
 
                                         <!-- URL Input box (initially hidden) -->

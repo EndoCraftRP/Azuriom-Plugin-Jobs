@@ -186,14 +186,19 @@ class ApplicationController extends Controller
                     continue;
                 }
 
-                $maxFiles = (int) $field->option('max_files', 5);
+                $allowUrls = (bool) $field->option('allow_urls', true);
+                if (!$allowUrls && count($urls) > 0) {
+                    $validator->errors()->add($key, trans('jobs::messages.invalid_url'));
+                }
+
+                $maxFiles = (int) ($field->option('max_files') ?: 5);
                 if ($totalCount > $maxFiles) {
                     $validator->errors()->add($key, trans('jobs::messages.limit_reached', ['max' => $maxFiles]));
                 }
 
-                $allowedExtsStr = $field->option('allowed_extensions') ?? 'pdf,jpg,png,jpeg';
+                $allowedExtsStr = $field->option('allowed_extensions') ?: 'pdf,jpg,png,jpeg';
                 $allowedExts = array_map('trim', explode(',', strtolower($allowedExtsStr)));
-                $maxSizeMB = (float) $field->option('max_size', 5);
+                $maxSizeMB = (float) ($field->option('max_size') ?: 5);
                 $maxSizeBytes = $maxSizeMB * 1024 * 1024;
 
                 $totalSize = 0;
