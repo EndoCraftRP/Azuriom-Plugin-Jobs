@@ -20,7 +20,7 @@ return [
     'status_accepted' => 'Acceptée',
     'status_refused' => 'Refusée',
     'admin_note' => 'Note interne (non visible du candidat)',
-    'public_note' => 'Remarques / Note publique (visible par le candidat)',
+    'public_note' => 'Remarques / Note publique',
     'update_status' => 'Mettre à jour le statut',
     'update_status_and_notify' => 'Mettre à jour et envoyer l\'e-mail',
     'update_status_without_notify' => 'Mettre à jour (sans notification)',
