@@ -63,6 +63,7 @@
                         <option value="date">Single Date</option>
                         <option value="date_range">Date Range</option>
                         <option value="html">Free-Text/HTML Block</option>
+                        <option value="attachment">Attachment / Upload</option>
                     </select>
                 </div>
                 <div class="mb-2">
@@ -106,6 +107,25 @@
                 <div class="mb-2 html-wrap d-none">
                     <label class="form-label">Custom HTML / Text Content</label>
                     <textarea class="form-control" rows="5" data-name="html" placeholder="<p>Enter your HTML or text content here</p>"></textarea>
+                </div>
+
+                <!-- Attachment specific configuration -->
+                <div class="mb-2 attachment-wrap d-none border rounded p-2 bg-light">
+                    <h6>Attachment Settings</h6>
+                    <div class="mb-2">
+                        <label class="form-label small">Permitted file extensions (comma separated, e.g. pdf, jpg, png)</label>
+                        <input type="text" class="form-control form-control-sm" data-name="allowed_extensions" placeholder="pdf, jpg, png">
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label small">Max files allowed</label>
+                            <input type="number" class="form-control form-control-sm" data-name="max_files" placeholder="5" min="1">
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small">Max total size (MB)</label>
+                            <input type="number" class="form-control form-control-sm" data-name="max_size" placeholder="5" min="1">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Required Toggle -->

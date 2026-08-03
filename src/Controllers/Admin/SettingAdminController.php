@@ -17,10 +17,14 @@ class SettingAdminController extends Controller
     {
         $validated = $request->validate([
             'discord_webhook_url' => ['nullable', 'url', 'max:255'],
+            'compress_images' => ['nullable', 'boolean'],
+            'trusted_domains' => ['nullable', 'string'],
         ]);
 
         Setting::updateSettings([
             'jobs.discord_webhook_url' => $validated['discord_webhook_url'] ?? null,
+            'jobs.compress_images' => $request->has('compress_images'),
+            'jobs.trusted_domains' => $validated['trusted_domains'] ?? null,
         ]);
 
         return back()->with('success', trans('messages.status.updated'));

@@ -25,7 +25,7 @@
         @elseif(! $position->isAcceptingApplications())
             <div class="alert alert-warning">{{ trans('jobs::messages.position_closed') }}</div>
         @else
-            <form method="POST" action="{{ route('jobs.store', $position) }}">
+            <form method="POST" action="{{ route('jobs.store', $position) }}" enctype="multipart/form-data">
                 @csrf
                 <div class="row g-3">
                     @foreach($position->fields as $field)
@@ -114,6 +114,61 @@
                                         </div>
                                     @endif
                                     @error('field_'.$field->id)<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                @elseif($field->type === 'attachment')
+                                    <div class="attachment-field-container border rounded p-3 bg-light"
+                                         id="attachment_container_{{ $field->id }}"
+                                         data-field-id="{{ $field->id }}"
+                                         data-max-files="{{ $field->option('max_files') ?? 5 }}"
+                                         data-max-size="{{ $field->option('max_size') ?? 5 }}"
+                                         data-allowed-extensions="{{ $field->option('allowed_extensions') ?? 'pdf,jpg,png,jpeg' }}"
+                                         data-msg-limit-reached="{{ trans('jobs::messages.limit_reached') }}"
+                                         data-msg-size-exceeded="{{ trans('jobs::messages.size_limit_exceeded') }}"
+                                         data-msg-invalid-extension="{{ trans('jobs::messages.invalid_extension') }}"
+                                         data-msg-invalid-url="{{ trans('jobs::messages.invalid_url') }}">
+
+                                        <!-- Hidden Inputs Container -->
+                                        <div class="hidden-inputs-container d-none"></div>
+
+                                        <!-- List of attached files and URLs -->
+                                        <div class="attachments-list list-group mb-3 d-none">
+                                            <!-- Items will be appended here dynamically by JS -->
+                                        </div>
+
+                                        <!-- Limit info -->
+                                        <div class="mb-3 text-muted small">
+                                            {{ trans('jobs::messages.attachment_limits', [
+                                                'max_files' => $field->option('max_files') ?? 5,
+                                                'max_size' => $field->option('max_size') ?? 5,
+                                                'extensions' => $field->option('allowed_extensions') ?? 'pdf,jpg,png,jpeg'
+                                            ]) }}
+                                        </div>
+
+                                        <!-- Upload / Add controls -->
+                                        <div class="d-flex gap-2">
+                                            <button type="button" class="btn btn-sm btn-outline-primary upload-btn">
+                                                <i class="bi bi-file-earmark-arrow-up"></i> {{ trans('jobs::messages.upload_file') }}
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary add-url-btn">
+                                                <i class="bi bi-link-45deg"></i> {{ trans('jobs::messages.add_url') }}
+                                            </button>
+                                        </div>
+
+                                        <!-- URL Input box (initially hidden) -->
+                                        <div class="url-input-box mt-3 d-none border rounded p-2 bg-white">
+                                            <label class="form-label small font-weight-bold">{{ trans('jobs::messages.enter_url') }}</label>
+                                            <div class="input-group input-group-sm">
+                                                <input type="url" class="form-control url-input" placeholder="https://example.com/image.jpg or https://youtube.com/watch?...">
+                                                <button class="btn btn-primary add-url-submit-btn" type="button">{{ trans('messages.actions.add') }}</button>
+                                                <button class="btn btn-outline-danger add-url-cancel-btn" type="button">{{ trans('messages.actions.cancel') }}</button>
+                                            </div>
+                                            <div class="url-error text-danger small mt-1 d-none"></div>
+                                        </div>
+
+                                        @error('field_'.$field->id)
+                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        @enderror
+                                        <div class="js-validation-error text-danger mt-1 d-none"></div>
+                                    </div>
                                 @else
                                     <input type="text" name="field_{{ $field->id }}" class="form-control" value="{{ old('field_'.$field->id) }}">
                                     @error('field_'.$field->id)<div class="text-danger mt-1">{{ $message }}</div>@enderror

@@ -19,6 +19,9 @@
                 'max' => $f->option('max', ''),
                 'regex' => $f->option('regex', ''),
                 'html' => $f->option('html', ''),
+                'allowed_extensions' => $f->option('allowed_extensions', ''),
+                'max_files' => $f->option('max_files', ''),
+                'max_size' => $f->option('max_size', ''),
             ];
         })->values();
     @endphp
