@@ -50,7 +50,14 @@ class ApplicationAdminController extends Controller
         ]);
 
         $application->load('position');
-        $application->user->notify(new ApplicationStatusChanged($application));
+
+        if ($request->boolean('notify')) {
+            try {
+                $application->user->notify(new ApplicationStatusChanged($application));
+            } catch (\Exception $e) {
+                return back()->with('error', trans('jobs::messages.email_error', ['error' => $e->getMessage()]));
+            }
+        }
 
         return back()->with('success', trans('jobs::messages.status_updated'));
     }

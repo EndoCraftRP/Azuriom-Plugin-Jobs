@@ -12,6 +12,7 @@ class ApplicationStatusRequest extends FormRequest
             'status' => ['required', 'in:pending,reviewing,accepted,refused'],
             'admin_note' => ['nullable', 'string', 'max:2000'],
             'public_note' => ['nullable', 'string', 'max:2000'],
+            'notify' => ['nullable', 'boolean'],
         ];
     }
 }

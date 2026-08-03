@@ -133,7 +133,10 @@
                             <label class="form-label">{{ trans('jobs::messages.public_note') }}</label>
                             <textarea class="form-control" name="public_note" rows="5">{{ old('public_note', $application->public_note) }}</textarea>
                         </div>
-                        <button class="btn btn-primary">{{ trans('jobs::messages.update_status') }}</button>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button type="submit" name="notify" value="1" class="btn btn-primary">{{ trans('jobs::messages.update_status_and_notify') }}</button>
+                            <button type="submit" name="notify" value="0" class="btn btn-secondary">{{ trans('jobs::messages.update_status_without_notify') }}</button>
+                        </div>
                     </form>
                     <a class="btn btn-danger mt-3" href="{{ route('jobs.admin.applications.destroy', $application) }}" data-confirm="delete">
                         {{ trans('messages.actions.delete') }}
