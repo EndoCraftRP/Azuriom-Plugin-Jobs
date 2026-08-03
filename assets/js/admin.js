@@ -20,7 +20,6 @@
     const options = setName('[data-name="options"]', 'options');
     const colMd = setName('[data-name="col_md"]', 'col_md');
 
-    // New fields
     const allowOther = setName('[data-name="allow_other"]', 'allow_other');
     const minVal = setName('[data-name="min"]', 'min');
     const maxVal = setName('[data-name="max"]', 'max');

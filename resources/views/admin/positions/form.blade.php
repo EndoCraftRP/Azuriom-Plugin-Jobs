@@ -48,15 +48,15 @@
             <div class="card-body">
                 <input type="hidden" data-name="id">
                 <div class="mb-2">
-                    <label class="form-label">Field Label (Not shown for HTML blocks)</label>
+                    <label class="form-label">Field Label</label>
                     <input class="form-control" placeholder="{{ trans('jobs::messages.positions.form.field_label_placeholder') }}" data-name="label">
                 </div>
                 <div class="mb-2">
                     <label class="form-label">Field Type</label>
                     <select class="form-select field-type" data-name="type">
-                        <option value="text">text</option>
-                        <option value="textarea">textarea</option>
-                        <option value="number">number</option>
+                        <option value="text">Text</option>
+                        <option value="textarea">Textarea</option>
+                        <option value="number">Number</option>
                         <option value="select">Dropdown list</option>
                         <option value="checkbox">Checkbox-like list</option>
                         <option value="radio">Radio button list</option>
