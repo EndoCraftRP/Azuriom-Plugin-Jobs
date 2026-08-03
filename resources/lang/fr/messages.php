@@ -65,6 +65,7 @@ return [
     'mail_reviewing_body' => 'Ton dossier a été pris en charge par l\'équipe staff.',
     'mail_accepted_body' => 'Félicitations ! Ta candidature a été acceptée.',
     'mail_refused_body' => 'Merci pour ta candidature. Elle n\'a pas été retenue.',
+    'mail_remarks' => 'Remarques : :remarks',
     'view_status' => 'Voir le statut',
     'cancel_application' => 'Annuler ma candidature',
     'application_cancelled' => 'Ta candidature a été annulée.',

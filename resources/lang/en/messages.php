@@ -65,6 +65,7 @@ return [
     'mail_reviewing_body' => 'Your application is now under review by the staff team.',
     'mail_accepted_body' => 'Congratulations, your application has been accepted.',
     'mail_refused_body' => 'Thanks for applying. Your application was not selected.',
+    'mail_remarks' => 'Remarks: :remarks',
     'view_status' => 'View status',
     'cancel_application' => 'Cancel my application',
     'application_cancelled' => 'Your application has been cancelled.',
