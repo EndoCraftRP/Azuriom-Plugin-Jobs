@@ -40,6 +40,8 @@ return [
         ],
         'settings' => [
             'discord_webhook_url' => 'Discord webhook URL',
+            'discord_webhook_full_data' => 'Include application details in Webhook',
+            'discord_webhook_full_data_help' => 'Send the questions and user responses with a link to the application in the Discord notification.',
             'compress_images' => 'Enable image compression',
             'compress_images_help' => 'Compress images and convert them to JPEG with a medium compression profile to minimize file size.',
             'trusted_domains' => 'Trusted Domains for Attachments',
@@ -51,6 +53,7 @@ return [
         'user_field' => 'User',
         'position_field' => 'Position',
         'footer' => 'Jobs - :site',
+        'view_application' => '[View Application](:url)',
     ],
     'position_has_applications' => 'Cannot delete this position because applications exist.',
     'position_saved' => 'Position saved.',

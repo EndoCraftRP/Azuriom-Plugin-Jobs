@@ -359,17 +359,57 @@ class ApplicationController extends Controller
         $webhook = setting('jobs.discord_webhook_url');
         if (! empty($webhook)) {
             try {
+                $embed = [
+                    'title' => trans('jobs::messages.discord.new_application_title', ['position' => $position->translatedName()]),
+                    'color' => 16776960,
+                    'url' => route('jobs.admin.applications.show', $application),
+                    'fields' => [
+                        ['name' => trans('jobs::messages.discord.user_field'), 'value' => Auth::user()->name, 'inline' => true],
+                        ['name' => trans('jobs::messages.discord.position_field'), 'value' => $position->translatedName(), 'inline' => true],
+                    ],
+                    'timestamp' => now()->toIso8601String(),
+                    'footer' => ['text' => trans('jobs::messages.discord.footer', ['site' => site_name()])],
+                ];
+
+                if (setting('jobs.discord_webhook_full_data')) {
+                    $embed['description'] = trans('jobs::messages.discord.view_application', ['url' => route('jobs.admin.applications.show', $application)]);
+
+                    foreach ($fields as $field) {
+                        if ($field->type === 'html') {
+                            continue;
+                        }
+
+                        $value = $answers[$field->id] ?? '-';
+                        if (is_array($value)) {
+                            $formattedAttachments = [];
+                            foreach ($value as $item) {
+                                if (($item['type'] ?? '') === 'file') {
+                                    $formattedAttachments[] = $item['name'] ?? 'File';
+                                } elseif (($item['type'] ?? '') === 'url') {
+                                    $formattedAttachments[] = $item['value'] ?? 'URL';
+                                }
+                            }
+                            $value = !empty($formattedAttachments) ? implode(', ', $formattedAttachments) : '-';
+                        }
+
+                        if ($value === null || trim($value) === '') {
+                            $value = '-';
+                        }
+
+                        $embed['fields'][] = [
+                            'name' => Str::limit($field->label, 250),
+                            'value' => Str::limit($value, 1000),
+                            'inline' => false,
+                        ];
+                    }
+                }
+
+                if (count($embed['fields']) > 25) {
+                    $embed['fields'] = array_slice($embed['fields'], 0, 25);
+                }
+
                 Http::post($webhook, [
-                    'embeds' => [[
-                        'title' => trans('jobs::messages.discord.new_application_title', ['position' => $position->translatedName()]),
-                        'color' => 16776960,
-                        'fields' => [
-                            ['name' => trans('jobs::messages.discord.user_field'), 'value' => Auth::user()->name, 'inline' => true],
-                            ['name' => trans('jobs::messages.discord.position_field'), 'value' => $position->translatedName(), 'inline' => true],
-                        ],
-                        'timestamp' => now()->toIso8601String(),
-                        'footer' => ['text' => trans('jobs::messages.discord.footer', ['site' => site_name()])],
-                    ]],
+                    'embeds' => [$embed],
                 ]);
             } catch (\Throwable $e) {
             }
