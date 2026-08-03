@@ -13,6 +13,13 @@
                 </div>
                 <div class="mb-3">
                     <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="discord_webhook_full_data" id="discordWebhookFullData" value="1" @checked(old('discord_webhook_full_data', setting('jobs.discord_webhook_full_data')))>
+                        <label class="form-check-label" for="discordWebhookFullData">{{ trans('jobs::messages.admin.settings.discord_webhook_full_data') }}</label>
+                    </div>
+                    <div class="small text-muted">{{ trans('jobs::messages.admin.settings.discord_webhook_full_data_help') }}</div>
+                </div>
+                <div class="mb-3">
+                    <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" name="compress_images" id="compressImages" value="1" @checked(old('compress_images', setting('jobs.compress_images')))>
                         <label class="form-check-label" for="compressImages">{{ trans('jobs::messages.admin.settings.compress_images') }}</label>
                     </div>

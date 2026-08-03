@@ -40,6 +40,8 @@ return [
         ],
         'settings' => [
             'discord_webhook_url' => 'URL du webhook Discord',
+            'discord_webhook_full_data' => 'Inclure les détails de la candidature dans le Webhook',
+            'discord_webhook_full_data_help' => 'Envoyer les questions et les réponses de l\'utilisateur avec un lien vers la candidature dans la notification Discord.',
             'compress_images' => 'Activer la compression des images',
             'compress_images_help' => 'Compresse les images et les convertit en JPEG avec un profil de compression moyen pour minimiser la taille du fichier.',
             'trusted_domains' => 'Domaines de confiance pour les pièces jointes',
@@ -51,6 +53,7 @@ return [
         'user_field' => 'Joueur',
         'position_field' => 'Poste',
         'footer' => 'Jobs - :site',
+        'view_application' => '[Voir la candidature](:url)',
     ],
     'position_has_applications' => 'Impossible de supprimer : des candidatures existent pour ce poste.',
     'position_saved' => 'Poste enregistré.',
