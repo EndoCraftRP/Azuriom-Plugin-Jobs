@@ -50,4 +50,15 @@ class Field extends Model
         }
         return $default;
     }
+
+    public function setTypeAttribute($value)
+    {
+        $allowed = ['text', 'textarea', 'number', 'select', 'checkbox', 'radio', 'date', 'date_range', 'html'];
+
+        if (! in_array($value, $allowed, true)) {
+            throw new \InvalidArgumentException("Invalid field type: {$value}");
+        }
+
+        $this->attributes['type'] = $value;
+    }
 }
