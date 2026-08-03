@@ -111,6 +111,10 @@ class PositionAdminController extends Controller
                 'max' => isset($field['max']) && $field['max'] !== '' ? (int) $field['max'] : null,
                 'regex' => isset($field['regex']) && $field['regex'] !== '' ? $field['regex'] : null,
                 'html' => isset($field['html']) && $field['html'] !== '' ? $field['html'] : null,
+                'allowed_extensions' => isset($field['allowed_extensions']) && $field['allowed_extensions'] !== '' ? $field['allowed_extensions'] : null,
+                'max_files' => isset($field['max_files']) && $field['max_files'] !== '' ? (int) $field['max_files'] : null,
+                'max_size' => isset($field['max_size']) && $field['max_size'] !== '' ? (int) $field['max_size'] : null,
+                'allow_urls' => isset($field['allow_urls']) ? (bool) $field['allow_urls'] : false,
             ];
 
             $payload = [

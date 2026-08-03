@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class ApplicationController extends Controller
 {
@@ -65,6 +66,14 @@ class ApplicationController extends Controller
                 $rules[$endKey] = $field->is_required ? ['required', 'date', 'after_or_equal:'.$startKey] : ['nullable', 'date', 'after_or_equal:'.$startKey];
                 $attributes[$startKey] = $field->label . ' (Start)';
                 $attributes[$endKey] = $field->label . ' (End)';
+                continue;
+            }
+
+            if ($field->type === 'attachment') {
+                $rules[$key . '_files'] = ['nullable', 'array'];
+                $rules[$key . '_files.*'] = ['file'];
+                $rules[$key . '_urls'] = ['nullable', 'array'];
+                $rules[$key . '_urls.*'] = ['string', 'url'];
                 continue;
             }
 
@@ -146,7 +155,97 @@ class ApplicationController extends Controller
             $rules[$key] = $fieldRules;
         }
 
-        $validated = Validator::make($request->all(), $rules, [], $attributes)->validate();
+        $validator = Validator::make($request->all(), $rules, [], $attributes);
+
+        $validator->after(function ($validator) use ($request, $fields) {
+            foreach ($fields as $field) {
+                if ($field->type !== 'attachment') {
+                    continue;
+                }
+
+                $key = 'field_' . $field->id;
+                $filesKey = $key . '_files';
+                $urlsKey = $key . '_urls';
+
+                $files = $request->file($filesKey) ?? [];
+                if (!is_array($files)) {
+                    $files = [$files];
+                }
+                $files = array_filter($files);
+
+                $urls = $request->input($urlsKey) ?? [];
+                if (!is_array($urls)) {
+                    $urls = [$urls];
+                }
+                $urls = array_filter(array_map('trim', $urls));
+
+                $totalCount = count($files) + count($urls);
+
+                if ($field->is_required && $totalCount === 0) {
+                    $validator->errors()->add($key, trans('validation.required', ['attribute' => $field->label]));
+                    continue;
+                }
+
+                $allowUrls = (bool) $field->option('allow_urls', true);
+                if (!$allowUrls && count($urls) > 0) {
+                    $validator->errors()->add($key, trans('jobs::messages.invalid_url'));
+                }
+
+                $maxFiles = (int) ($field->option('max_files') ?: 5);
+                if ($totalCount > $maxFiles) {
+                    $validator->errors()->add($key, trans('jobs::messages.limit_reached', ['max' => $maxFiles]));
+                }
+
+                $allowedExtsStr = $field->option('allowed_extensions') ?: 'pdf,jpg,png,jpeg';
+                $allowedExts = array_map('trim', explode(',', strtolower($allowedExtsStr)));
+                $maxSizeMB = (float) ($field->option('max_size') ?: 5);
+                $maxSizeBytes = $maxSizeMB * 1024 * 1024;
+
+                $totalSize = 0;
+                foreach ($files as $file) {
+                    if (!$file->isValid()) {
+                        continue;
+                    }
+                    $ext = strtolower($file->getClientOriginalExtension());
+                    if (!in_array($ext, $allowedExts, true)) {
+                        $validator->errors()->add($key, trans('jobs::messages.invalid_extension', ['extensions' => $allowedExtsStr]));
+                    }
+                    $totalSize += $file->getSize();
+                }
+
+                if ($totalSize > $maxSizeBytes) {
+                    $validator->errors()->add($key, trans('jobs::messages.size_limit_exceeded', ['max' => $maxSizeMB]));
+                }
+
+                $trustedDomainsStr = setting('jobs.trusted_domains');
+                if (!empty($trustedDomainsStr)) {
+                    $trustedDomains = array_filter(array_map('trim', preg_split('/,|\r\n|\r|\n/', $trustedDomainsStr)));
+                    if (!empty($trustedDomains)) {
+                        foreach ($urls as $url) {
+                            $host = parse_url($url, PHP_URL_HOST);
+                            if (!$host) {
+                                $validator->errors()->add($key, trans('jobs::messages.invalid_url'));
+                                continue;
+                            }
+                            $host = strtolower($host);
+                            $matched = false;
+                            foreach ($trustedDomains as $domain) {
+                                $domain = strtolower($domain);
+                                if ($host === $domain || str_ends_with($host, '.' . $domain)) {
+                                    $matched = true;
+                                    break;
+                                }
+                            }
+                            if (!$matched) {
+                                $validator->errors()->add($key, trans('jobs::messages.untrusted_domain') . " ({$host})");
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        $validated = $validator->validate();
 
         $answers = [];
         foreach ($fields as $field) {
@@ -178,6 +277,73 @@ class ApplicationController extends Controller
                     }
                 }
                 $answers[$field->id] = !empty($formatted) ? implode(', ', $formatted) : null;
+            } elseif ($field->type === 'attachment') {
+                $files = $request->file($key . '_files') ?? [];
+                if (!is_array($files)) {
+                    $files = [$files];
+                }
+                $files = array_filter($files);
+
+                $urls = $request->input($key . '_urls') ?? [];
+                if (!is_array($urls)) {
+                    $urls = [$urls];
+                }
+                $urls = array_filter(array_map('trim', $urls));
+
+                $attachments = [];
+
+                foreach ($files as $file) {
+                    if (!$file->isValid()) {
+                        continue;
+                    }
+
+                    $originalName = $file->getClientOriginalName();
+                    $extension = strtolower($file->getClientOriginalExtension());
+                    $secureName = Str::random(40) . '.' . $extension;
+
+                    $dir = storage_path('app/jobs-attachments');
+                    if (!file_exists($dir)) {
+                        mkdir($dir, 0755, true);
+                    }
+
+                    $destinationPath = $dir . '/' . $secureName;
+                    $compressed = false;
+
+                    if (setting('jobs.compress_images') && in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true)) {
+                        $compressed = $this->compressAndSaveImage($file, $destinationPath);
+                        if ($compressed) {
+                            $originalName = pathinfo($originalName, PATHINFO_FILENAME) . '.jpeg';
+                            $newSecureName = pathinfo($secureName, PATHINFO_FILENAME) . '.jpeg';
+                            if ($secureName !== $newSecureName) {
+                                rename($destinationPath, $dir . '/' . $newSecureName);
+                                $secureName = $newSecureName;
+                            }
+                        }
+                    }
+
+                    if (!$compressed) {
+                        $file->move($dir, $secureName);
+                    }
+
+                    $savedPath = 'jobs-attachments/' . $secureName;
+                    $finalSize = file_exists($dir . '/' . $secureName) ? filesize($dir . '/' . $secureName) : $file->getSize();
+
+                    $attachments[] = [
+                        'type' => 'file',
+                        'name' => $originalName,
+                        'path' => $savedPath,
+                        'size' => $finalSize,
+                    ];
+                }
+
+                foreach ($urls as $url) {
+                    $attachments[] = [
+                        'type' => 'url',
+                        'value' => $url,
+                    ];
+                }
+
+                $answers[$field->id] = $attachments;
             } else {
                 $answers[$field->id] = $validated[$key] ?? null;
             }
@@ -246,5 +412,109 @@ class ApplicationController extends Controller
         if ($application->user_id !== Auth::id()) {
             abort(403);
         }
+    }
+
+    public function downloadAttachment(Request $request, Application $application, string $filename)
+    {
+        if (auth()->id() !== $application->user_id && !$request->user()?->can('jobs.manage')) {
+            abort(403);
+        }
+
+        $filename = basename($filename);
+        $path = storage_path('app/jobs-attachments/' . $filename);
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->download($path);
+    }
+
+    public function deleteAttachment(Request $request, Application $application, int $fieldId, int $index)
+    {
+        if (auth()->id() !== $application->user_id && !$request->user()?->can('jobs.manage')) {
+            abort(403);
+        }
+
+        $answers = $application->answers;
+
+        if (isset($answers[$fieldId]) && is_array($answers[$fieldId])) {
+            $attachments = $answers[$fieldId];
+            if (isset($attachments[$index])) {
+                $item = $attachments[$index];
+
+                if (isset($item['type']) && $item['type'] === 'file' && isset($item['path'])) {
+                    $path = storage_path('app/' . $item['path']);
+                    if (file_exists($path)) {
+                        @unlink($path);
+                    }
+                }
+
+                unset($attachments[$index]);
+                $attachments = array_values($attachments);
+
+                $answers[$fieldId] = $attachments;
+
+                $application->update(['answers' => $answers]);
+
+                return back()->with('success', trans('jobs::messages.attachment_deleted'));
+            }
+        }
+
+        return back()->with('error', 'Attachment not found.');
+    }
+
+    private function compressAndSaveImage($file, $destinationPath): bool
+    {
+        if (!extension_loaded('gd')) {
+            return false;
+        }
+
+        $imageInfo = @getimagesize($file->getRealPath());
+        if (!$imageInfo) {
+            return false;
+        }
+
+        $mime = $imageInfo['mime'];
+        switch ($mime) {
+            case 'image/jpeg':
+            case 'image/jpg':
+                $img = @imagecreatefromjpeg($file->getRealPath());
+                break;
+            case 'image/png':
+                $img = @imagecreatefrompng($file->getRealPath());
+                break;
+            case 'image/gif':
+                $img = @imagecreatefromgif($file->getRealPath());
+                break;
+            case 'image/webp':
+                if (function_exists('imagecreatefromwebp')) {
+                    $img = @imagecreatefromwebp($file->getRealPath());
+                } else {
+                    $img = false;
+                }
+                break;
+            default:
+                $img = false;
+                break;
+        }
+
+        if (!$img) {
+            return false;
+        }
+
+        $width = imagesx($img);
+        $height = imagesy($img);
+        $bg = imagecreatetruecolor($width, $height);
+        $white = imagecolorallocate($bg, 255, 255, 255);
+        imagefill($bg, 0, 0, $white);
+        imagecopy($bg, $img, 0, 0, 0, 0, $width, $height);
+
+        $success = imagejpeg($bg, $destinationPath, 65);
+
+        imagedestroy($img);
+        imagedestroy($bg);
+
+        return $success;
     }
 }

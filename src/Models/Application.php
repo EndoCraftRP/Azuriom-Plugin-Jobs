@@ -12,6 +12,27 @@ class Application extends Model
     use HasUser;
 
     public const STATUS_PENDING = 'pending';
+
+    protected static function booted()
+    {
+        static::deleting(function (Application $application) {
+            $answers = $application->answers;
+            if (is_array($answers)) {
+                foreach ($answers as $fieldId => $value) {
+                    if (is_array($value)) {
+                        foreach ($value as $item) {
+                            if (isset($item['type']) && $item['type'] === 'file' && isset($item['path'])) {
+                                $path = storage_path('app/' . $item['path']);
+                                if (file_exists($path)) {
+                                    @unlink($path);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
     public const STATUS_REVIEWING = 'reviewing';
     public const STATUS_ACCEPTED = 'accepted';
     public const STATUS_REFUSED = 'refused';

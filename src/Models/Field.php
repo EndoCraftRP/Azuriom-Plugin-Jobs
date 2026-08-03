@@ -53,7 +53,7 @@ class Field extends Model
 
     public function setTypeAttribute($value)
     {
-        $allowed = ['text', 'textarea', 'number', 'select', 'checkbox', 'radio', 'date', 'date_range', 'html'];
+        $allowed = ['text', 'textarea', 'number', 'select', 'checkbox', 'radio', 'date', 'date_range', 'html', 'attachment'];
 
         if (! in_array($value, $allowed, true)) {
             throw new \InvalidArgumentException("Invalid field type: {$value}");
