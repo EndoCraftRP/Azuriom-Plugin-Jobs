@@ -19,7 +19,11 @@
             <div class="card mb-3">
                 <div class="card-body">
                     @foreach($application->position->fields as $field)
-                        <div class="mb-2"><strong>{{ $field->label }}</strong><br>{{ data_get($application->answers, $field->id, '-') }}</div>
+                        @if($field->type === 'html')
+                            <div class="mb-3">{!! $field->option('html', '') !!}</div>
+                        @else
+                            <div class="mb-2"><strong>{{ $field->label }}</strong><br>{{ data_get($application->answers, $field->id) ?? '-' }}</div>
+                        @endif
                     @endforeach
                 </div>
             </div>

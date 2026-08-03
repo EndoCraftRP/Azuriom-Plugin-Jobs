@@ -20,10 +20,14 @@
         <hr>
         <h5>{{ trans('jobs::messages.answers_title') }}</h5>
         @foreach($application->position->fields as $field)
-            <div class="mb-2">
-                <strong>{{ $field->label }}</strong><br>
-                <span>{{ data_get($application->answers, $field->id, '-') }}</span>
-            </div>
+            @if($field->type === 'html')
+                <div class="mb-3">{!! $field->option('html', '') !!}</div>
+            @else
+                <div class="mb-2">
+                    <strong>{{ $field->label }}</strong><br>
+                    <span>{{ data_get($application->answers, $field->id) ?? '-' }}</span>
+                </div>
+            @endif
         @endforeach
     </div>
 @endsection

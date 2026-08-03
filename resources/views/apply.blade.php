@@ -30,31 +30,102 @@
                 <div class="row g-3">
                     @foreach($position->fields as $field)
                         <div class="col-md-{{ in_array($field->col_md, [12, 6, 4], true) ? $field->col_md : 12 }}">
-                            <label class="form-label">{{ $field->label }}</label>
-                            @if($field->type === 'textarea')
-                                <textarea name="field_{{ $field->id }}" class="form-control" rows="5">{{ old('field_'.$field->id) }}</textarea>
-                            @elseif($field->type === 'number')
-                                <input type="number" name="field_{{ $field->id }}" class="form-control" value="{{ old('field_'.$field->id) }}">
-                            @elseif($field->type === 'select')
-                                <select name="field_{{ $field->id }}" class="form-select">
-                                    <option value="">{{ trans('jobs::messages.select_placeholder') }}</option>
-                                    @foreach($field->options ?? [] as $option)
-                                        <option value="{{ $option }}" @selected(old('field_'.$field->id) === $option)>{{ $option }}</option>
-                                    @endforeach
-                                </select>
-                            @elseif($field->type === 'checkbox')
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="field_{{ $field->id }}" value="1" @checked(old('field_'.$field->id))>
-                                </div>
+                            @if($field->type === 'html')
+                                {!! $field->option('html', '') !!}
                             @else
-                                <input type="text" name="field_{{ $field->id }}" class="form-control" value="{{ old('field_'.$field->id) }}">
+                                <label class="form-label">
+                                    {{ $field->label }}
+                                    @if($field->is_required) <span class="text-danger">*</span> @endif
+                                </label>
+
+                                @if($field->type === 'textarea')
+                                    <textarea name="field_{{ $field->id }}" class="form-control" rows="5">{{ old('field_'.$field->id) }}</textarea>
+                                    @error('field_'.$field->id)<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                @elseif($field->type === 'number')
+                                    <input type="number" name="field_{{ $field->id }}" class="form-control" value="{{ old('field_'.$field->id) }}">
+                                    @error('field_'.$field->id)<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                @elseif($field->type === 'date')
+                                    <input type="date" name="field_{{ $field->id }}" class="form-control" value="{{ old('field_'.$field->id) }}">
+                                    @error('field_'.$field->id)<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                @elseif($field->type === 'date_range')
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <label class="form-label small text-muted">{{ trans('jobs::messages.start_date') }}</label>
+                                            <input type="date" name="field_{{ $field->id }}_start" class="form-control" value="{{ old('field_'.$field->id.'_start') }}">
+                                            @error('field_'.$field->id.'_start')<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label small text-muted">{{ trans('jobs::messages.end_date') }}</label>
+                                            <input type="date" name="field_{{ $field->id }}_end" class="form-control" value="{{ old('field_'.$field->id.'_end') }}">
+                                            @error('field_'.$field->id.'_end')<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                        </div>
+                                    </div>
+                                @elseif($field->type === 'select')
+                                    <select name="field_{{ $field->id }}" class="form-select select-field">
+                                        <option value="">{{ trans('jobs::messages.select_placeholder') }}</option>
+                                        @foreach($field->options ?? [] as $option)
+                                            <option value="{{ $option }}" @selected(old('field_'.$field->id) === $option)>{{ $option }}</option>
+                                        @endforeach
+                                        @if($field->option('allow_other'))
+                                            <option value="other" @selected(old('field_'.$field->id) === 'other')>{{ trans('jobs::messages.other') }}</option>
+                                        @endif
+                                    </select>
+                                    @error('field_'.$field->id)<div class="text-danger mt-1">{{ $message }}</div>@enderror
+
+                                    @if($field->option('allow_other'))
+                                        <div class="mt-2 d-none other-input-wrap">
+                                            <input type="text" name="field_{{ $field->id }}_other" class="form-control" placeholder="{{ trans('jobs::messages.other_placeholder') }}" value="{{ old('field_'.$field->id.'_other') }}">
+                                            @error('field_'.$field->id.'_other')<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                        </div>
+                                    @endif
+                                @elseif($field->type === 'checkbox')
+                                    @foreach($field->options ?? [] as $option)
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="field_{{ $field->id }}[]" value="{{ $option }}" @checked(is_array(old('field_'.$field->id)) && in_array($option, old('field_'.$field->id))) id="field_{{ $field->id }}_{{ $loop->index }}">
+                                            <label class="form-check-label" for="field_{{ $field->id }}_{{ $loop->index }}">{{ $option }}</label>
+                                        </div>
+                                    @endforeach
+                                    @if($field->option('allow_other'))
+                                        <div class="form-check">
+                                            <input class="form-check-input other-checkbox" type="checkbox" name="field_{{ $field->id }}[]" value="other" @checked(is_array(old('field_'.$field->id)) && in_array('other', old('field_'.$field->id))) id="field_{{ $field->id }}_other_checkbox">
+                                            <label class="form-check-label" for="field_{{ $field->id }}_other_checkbox">{{ trans('jobs::messages.other') }}</label>
+                                        </div>
+                                        <div class="mt-2 d-none other-input-wrap">
+                                            <input type="text" name="field_{{ $field->id }}_other" class="form-control" placeholder="{{ trans('jobs::messages.other_placeholder') }}" value="{{ old('field_'.$field->id.'_other') }}">
+                                            @error('field_'.$field->id.'_other')<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                        </div>
+                                    @endif
+                                    @error('field_'.$field->id)<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                @elseif($field->type === 'radio')
+                                    @foreach($field->options ?? [] as $option)
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="field_{{ $field->id }}" value="{{ $option }}" @checked(old('field_'.$field->id) === $option) id="field_{{ $field->id }}_{{ $loop->index }}">
+                                            <label class="form-check-label" for="field_{{ $field->id }}_{{ $loop->index }}">{{ $option }}</label>
+                                        </div>
+                                    @endforeach
+                                    @if($field->option('allow_other'))
+                                        <div class="form-check">
+                                            <input class="form-check-input other-radio" type="radio" name="field_{{ $field->id }}" value="other" @checked(old('field_'.$field->id) === 'other') id="field_{{ $field->id }}_other_radio">
+                                            <label class="form-check-label" for="field_{{ $field->id }}_other_radio">{{ trans('jobs::messages.other') }}</label>
+                                        </div>
+                                        <div class="mt-2 d-none other-input-wrap">
+                                            <input type="text" name="field_{{ $field->id }}_other" class="form-control" placeholder="{{ trans('jobs::messages.other_placeholder') }}" value="{{ old('field_'.$field->id.'_other') }}">
+                                            @error('field_'.$field->id.'_other')<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                        </div>
+                                    @endif
+                                    @error('field_'.$field->id)<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                @else
+                                    <input type="text" name="field_{{ $field->id }}" class="form-control" value="{{ old('field_'.$field->id) }}">
+                                    @error('field_'.$field->id)<div class="text-danger mt-1">{{ $message }}</div>@enderror
+                                @endif
                             @endif
-                            @error('field_'.$field->id)<div class="text-danger mt-1">{{ $message }}</div>@enderror
                         </div>
                     @endforeach
                 </div>
                 <button type="submit" class="btn btn-primary mt-3">{{ trans('jobs::messages.apply') }}</button>
             </form>
+
+            <script src="{{ plugin_asset('jobs', 'js/apply.js') }}" defer></script>
         @endif
     </div>
 @endsection

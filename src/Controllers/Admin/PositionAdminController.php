@@ -102,10 +102,21 @@ class PositionAdminController extends Controller
         $keptIds = [];
 
         foreach ($fields as $index => $field) {
+            $choices = isset($field['options']) ? array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', (string) $field['options'])))) : [];
+
+            $optionsPayload = [
+                'choices' => $choices,
+                'allow_other' => isset($field['allow_other']) ? (bool) $field['allow_other'] : false,
+                'min' => isset($field['min']) && $field['min'] !== '' ? (int) $field['min'] : null,
+                'max' => isset($field['max']) && $field['max'] !== '' ? (int) $field['max'] : null,
+                'regex' => isset($field['regex']) && $field['regex'] !== '' ? $field['regex'] : null,
+                'html' => isset($field['html']) && $field['html'] !== '' ? $field['html'] : null,
+            ];
+
             $payload = [
                 'label' => $field['label'] ?? '',
                 'type' => $field['type'] ?? 'text',
-                'options' => isset($field['options']) ? array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', (string) $field['options'])))) : null,
+                'options' => $optionsPayload,
                 'is_required' => ! empty($field['is_required']),
                 'col_md' => in_array((int) ($field['col_md'] ?? 12), [12, 6, 4], true) ? (int) $field['col_md'] : 12,
                 'order' => $index,

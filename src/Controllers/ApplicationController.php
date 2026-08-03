@@ -48,35 +48,139 @@ class ApplicationController extends Controller
 
         $rules = [];
         $attributes = [];
-        $answers = [];
         $fields = $position->fields()->orderBy('order')->get();
 
         foreach ($fields as $field) {
+            if ($field->type === 'html') {
+                continue;
+            }
+
             $key = 'field_'.$field->id;
             $attributes[$key] = $field->label;
+
+            if ($field->type === 'date_range') {
+                $startKey = $key . '_start';
+                $endKey = $key . '_end';
+                $rules[$startKey] = $field->is_required ? ['required', 'date'] : ['nullable', 'date'];
+                $rules[$endKey] = $field->is_required ? ['required', 'date', 'after_or_equal:'.$startKey] : ['nullable', 'date', 'after_or_equal:'.$startKey];
+                $attributes[$startKey] = $field->label . ' (Start)';
+                $attributes[$endKey] = $field->label . ' (End)';
+                continue;
+            }
+
             $fieldRules = $field->is_required ? ['required'] : ['nullable'];
+
             if ($field->type === 'number') {
                 $fieldRules[] = 'numeric';
+                $min = $field->option('min');
+                if ($min !== null && $min !== '') {
+                    $fieldRules[] = 'min:' . $min;
+                }
+                $max = $field->option('max');
+                if ($max !== null && $max !== '') {
+                    $fieldRules[] = 'max:' . $max;
+                }
+            } elseif ($field->type === 'date') {
+                $fieldRules[] = 'date';
+            } elseif ($field->type === 'text' || $field->type === 'textarea') {
+                $fieldRules[] = 'string';
+                $min = $field->option('min');
+                if ($min !== null && $min !== '') {
+                    $fieldRules[] = 'min:' . $min;
+                }
+                $max = $field->option('max');
+                if ($max !== null && $max !== '') {
+                    $fieldRules[] = 'max:' . $max;
+                } else {
+                    $fieldRules[] = $field->type === 'text' ? 'max:500' : 'max:3000';
+                }
+                $regex = $field->option('regex');
+                if ($regex !== null && $regex !== '') {
+                    $fieldRules[] = 'regex:' . $regex;
+                }
+            } elseif ($field->type === 'select' || $field->type === 'radio') {
+                $fieldRules[] = 'string';
+                $allowedOptions = $field->options ?? [];
+                if ($field->option('allow_other')) {
+                    $allowedOptions = array_merge($allowedOptions, ['other']);
+
+                    $otherKey = $key . '_other';
+                    $rules[$otherKey] = [
+                        'required_if:' . $key . ',other',
+                        'nullable',
+                        'string',
+                        'max:255'
+                    ];
+                    $attributes[$otherKey] = $field->label . ' (' . trans('jobs::messages.other') . ')';
+                }
+                if (!empty($allowedOptions)) {
+                    $fieldRules[] = 'in:' . implode(',', $allowedOptions);
+                }
             } elseif ($field->type === 'checkbox') {
-                $fieldRules[] = 'boolean';
+                $fieldRules[] = 'array';
+                $allowedOptions = $field->options ?? [];
+                if ($field->option('allow_other')) {
+                    $allowedOptions = array_merge($allowedOptions, ['other']);
+
+                    $otherKey = $key . '_other';
+                    $rules[$otherKey] = [
+                        function ($attribute, $value, $fail) use ($request, $key) {
+                            $choices = $request->input($key);
+                            if (is_array($choices) && in_array('other', $choices) && empty($value)) {
+                                $fail(trans('jobs::messages.validation_other_required'));
+                            }
+                        },
+                        'nullable',
+                        'string',
+                        'max:255'
+                    ];
+                    $attributes[$otherKey] = $field->label . ' (' . trans('jobs::messages.other') . ')';
+                }
+                if (!empty($allowedOptions)) {
+                    $rules[$key . '.*'] = ['in:' . implode(',', $allowedOptions)];
+                }
             } else {
                 $fieldRules[] = 'string';
             }
-            if ($field->type === 'text') {
-                $fieldRules[] = 'max:500';
-            }
-            if ($field->type === 'textarea') {
-                $fieldRules[] = 'max:3000';
-            }
-            if ($field->type === 'select' && is_array($field->options)) {
-                $fieldRules[] = 'in:'.implode(',', $field->options);
-            }
+
             $rules[$key] = $fieldRules;
         }
 
         $validated = Validator::make($request->all(), $rules, [], $attributes)->validate();
+
+        $answers = [];
         foreach ($fields as $field) {
-            $answers[$field->id] = $validated['field_'.$field->id] ?? null;
+            if ($field->type === 'html') {
+                continue;
+            }
+
+            $key = 'field_'.$field->id;
+
+            if ($field->type === 'date_range') {
+                $start = $validated[$key.'_start'] ?? null;
+                $end = $validated[$key.'_end'] ?? null;
+                $answers[$field->id] = ($start && $end) ? trans('jobs::messages.from_to_format', ['start' => $start, 'end' => $end]) : null;
+            } elseif (($field->type === 'select' || $field->type === 'radio') && ($validated[$key] ?? null) === 'other') {
+                $otherVal = $validated[$key.'_other'] ?? '';
+                $answers[$field->id] = trans('jobs::messages.other_format', ['value' => $otherVal]);
+            } elseif ($field->type === 'checkbox') {
+                $choices = $validated[$key] ?? [];
+                if (!is_array($choices)) {
+                    $choices = [];
+                }
+                $formatted = [];
+                foreach ($choices as $choice) {
+                    if ($choice === 'other') {
+                        $otherVal = $request->input($key.'_other') ?? '';
+                        $formatted[] = trans('jobs::messages.other_format', ['value' => $otherVal]);
+                    } else {
+                        $formatted[] = $choice;
+                    }
+                }
+                $answers[$field->id] = !empty($formatted) ? implode(', ', $formatted) : null;
+            } else {
+                $answers[$field->id] = $validated[$key] ?? null;
+            }
         }
 
         $application = Application::create([
