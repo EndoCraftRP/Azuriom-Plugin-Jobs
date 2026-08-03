@@ -52,7 +52,7 @@
                                                             <div class="small text-muted mb-2">{{ round(($item['size'] ?? 0) / (1024 * 1024), 2) }} MB</div>
                                                             <div class="d-flex gap-1 justify-content-between mt-auto">
                                                                 <a href="{{ $downloadUrl }}" class="btn btn-sm btn-primary w-100"><i class="bi bi-download"></i> {{ trans('jobs::messages.download') }}</a>
-                                                                @if(auth()->id() === $application->user_id || auth()->user()?->can('jobs.manage'))
+                                                                @if(auth()->user()?->can('jobs.manage'))
                                                                     <form action="{{ route('jobs.attachments.delete', [$application, $field->id, $index]) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ trans('jobs::messages.confirm_delete_attachment') }}');">
                                                                         @csrf
                                                                         @method('DELETE')
@@ -88,7 +88,7 @@
                                                             <div class="small text-muted mb-2">{{ trans('jobs::messages.web_link') }}</div>
                                                             <div class="d-flex gap-1 justify-content-between mt-auto">
                                                                 <a href="{{ $url }}" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline-secondary w-100"><i class="bi bi-box-arrow-up-right"></i> {{ trans('jobs::messages.open_link') }}</a>
-                                                                @if(auth()->id() === $application->user_id || auth()->user()?->can('jobs.manage'))
+                                                                @if(auth()->user()?->can('jobs.manage'))
                                                                     <form action="{{ route('jobs.attachments.delete', [$application, $field->id, $index]) }}" method="POST" class="d-inline" onsubmit="return confirm('{{ trans('jobs::messages.confirm_delete_attachment') }}');">
                                                                         @csrf
                                                                         @method('DELETE')
