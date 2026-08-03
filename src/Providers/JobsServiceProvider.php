@@ -33,9 +33,18 @@ class JobsServiceProvider extends BasePluginServiceProvider
                 'icon' => 'bi bi-person-badge',
                 'route' => 'jobs.admin.*',
                 'items' => [
-                    'jobs.admin.applications.index' => trans('jobs::messages.admin_applications'),
-                    'jobs.admin.positions.index' => trans('jobs::messages.admin_positions'),
-                    'jobs.admin.settings.edit' => trans('jobs::messages.admin_settings'),
+                    'jobs.admin.applications.index' => [
+                        'name' => trans('jobs::messages.admin_applications'),
+                        'permission' => 'jobs.applications',
+                    ],
+                    'jobs.admin.positions.index' => [
+                        'name' => trans('jobs::messages.admin_positions'),
+                        'permission' => 'jobs.admin',
+                    ],
+                    'jobs.admin.settings.edit' => [
+                        'name' => trans('jobs::messages.admin_settings'),
+                        'permission' => 'jobs.admin',
+                    ],
                 ],
             ],
         ];
@@ -44,7 +53,8 @@ class JobsServiceProvider extends BasePluginServiceProvider
     protected function registerPermissions(): void
     {
         Permission::registerPermissions([
-            'jobs.manage' => 'jobs::messages.permission_manage',
+            'jobs.admin' => 'jobs::messages.permission_admin',
+            'jobs.applications' => 'jobs::messages.permission_applications',
         ]);
     }
 }

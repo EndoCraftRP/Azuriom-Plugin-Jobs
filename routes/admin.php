@@ -5,12 +5,14 @@ use Azuriom\Plugin\Jobs\Controllers\Admin\PositionAdminController;
 use Azuriom\Plugin\Jobs\Controllers\Admin\SettingAdminController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('can:jobs.manage')->group(function () {
+Route::middleware('can:jobs.applications')->group(function () {
     Route::get('/', [ApplicationAdminController::class, 'index'])->name('applications.index');
     Route::get('/applications/{application}', [ApplicationAdminController::class, 'show'])->name('applications.show');
     Route::patch('/applications/{application}/status', [ApplicationAdminController::class, 'updateStatus'])->name('applications.status');
     Route::delete('/applications/{application}', [ApplicationAdminController::class, 'destroy'])->name('applications.destroy');
+});
 
+Route::middleware('can:jobs.admin')->group(function () {
     Route::get('/positions', [PositionAdminController::class, 'index'])->name('positions.index');
     Route::get('/positions/create', [PositionAdminController::class, 'create'])->name('positions.create');
     Route::post('/positions', [PositionAdminController::class, 'store'])->name('positions.store');
