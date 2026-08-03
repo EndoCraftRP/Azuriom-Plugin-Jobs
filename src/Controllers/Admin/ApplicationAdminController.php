@@ -44,12 +44,20 @@ class ApplicationAdminController extends Controller
         $application->update([
             'status' => $request->input('status'),
             'admin_note' => $request->input('admin_note'),
+            'public_note' => $request->input('public_note'),
             'reviewed_by' => auth()->id(),
             'reviewed_at' => now(),
         ]);
 
         $application->load('position');
-        $application->user->notify(new ApplicationStatusChanged($application));
+
+        if ($request->boolean('notify')) {
+            try {
+                $application->user->notify(new ApplicationStatusChanged($application));
+            } catch (\Exception $e) {
+                return back()->with('error', trans('jobs::messages.email_error', ['error' => $e->getMessage()]));
+            }
+        }
 
         return back()->with('success', trans('jobs::messages.status_updated'));
     }

@@ -37,9 +37,14 @@ class ApplicationStatusChanged extends Notification
             default => trans('jobs::messages.status_pending'),
         };
 
-        return (new MailMessage())
+        $mail = (new MailMessage())
             ->subject($subject)
-            ->line($line)
-            ->action(trans('jobs::messages.view_status'), route('jobs.status', $this->application));
+            ->line($line);
+
+        if ($this->application->public_note) {
+            $mail->line(trans('jobs::messages.mail_remarks', ['remarks' => $this->application->public_note]));
+        }
+
+        return $mail->action(trans('jobs::messages.view_status'), route('jobs.status', $this->application));
     }
 }
