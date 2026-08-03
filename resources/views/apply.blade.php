@@ -50,12 +50,12 @@
                                 @elseif($field->type === 'date_range')
                                     <div class="row g-2">
                                         <div class="col-6">
-                                            <label class="form-label small text-muted">Start Date</label>
+                                            <label class="form-label small text-muted">{{ trans('jobs::messages.start_date') }}</label>
                                             <input type="date" name="field_{{ $field->id }}_start" class="form-control" value="{{ old('field_'.$field->id.'_start') }}">
                                             @error('field_'.$field->id.'_start')<div class="text-danger mt-1">{{ $message }}</div>@enderror
                                         </div>
                                         <div class="col-6">
-                                            <label class="form-label small text-muted">End Date</label>
+                                            <label class="form-label small text-muted">{{ trans('jobs::messages.end_date') }}</label>
                                             <input type="date" name="field_{{ $field->id }}_end" class="form-control" value="{{ old('field_'.$field->id.'_end') }}">
                                             @error('field_'.$field->id.'_end')<div class="text-danger mt-1">{{ $message }}</div>@enderror
                                         </div>
@@ -67,14 +67,14 @@
                                             <option value="{{ $option }}" @selected(old('field_'.$field->id) === $option)>{{ $option }}</option>
                                         @endforeach
                                         @if($field->option('allow_other'))
-                                            <option value="other" @selected(old('field_'.$field->id) === 'other')>Other</option>
+                                            <option value="other" @selected(old('field_'.$field->id) === 'other')>{{ trans('jobs::messages.other') }}</option>
                                         @endif
                                     </select>
                                     @error('field_'.$field->id)<div class="text-danger mt-1">{{ $message }}</div>@enderror
 
                                     @if($field->option('allow_other'))
                                         <div class="mt-2 d-none other-input-wrap">
-                                            <input type="text" name="field_{{ $field->id }}_other" class="form-control" placeholder="Please specify..." value="{{ old('field_'.$field->id.'_other') }}">
+                                            <input type="text" name="field_{{ $field->id }}_other" class="form-control" placeholder="{{ trans('jobs::messages.other_placeholder') }}" value="{{ old('field_'.$field->id.'_other') }}">
                                             @error('field_'.$field->id.'_other')<div class="text-danger mt-1">{{ $message }}</div>@enderror
                                         </div>
                                     @endif
@@ -88,10 +88,10 @@
                                     @if($field->option('allow_other'))
                                         <div class="form-check">
                                             <input class="form-check-input other-checkbox" type="checkbox" name="field_{{ $field->id }}[]" value="other" @checked(is_array(old('field_'.$field->id)) && in_array('other', old('field_'.$field->id))) id="field_{{ $field->id }}_other_checkbox">
-                                            <label class="form-check-label" for="field_{{ $field->id }}_other_checkbox">Other</label>
+                                            <label class="form-check-label" for="field_{{ $field->id }}_other_checkbox">{{ trans('jobs::messages.other') }}</label>
                                         </div>
                                         <div class="mt-2 d-none other-input-wrap">
-                                            <input type="text" name="field_{{ $field->id }}_other" class="form-control" placeholder="Please specify..." value="{{ old('field_'.$field->id.'_other') }}">
+                                            <input type="text" name="field_{{ $field->id }}_other" class="form-control" placeholder="{{ trans('jobs::messages.other_placeholder') }}" value="{{ old('field_'.$field->id.'_other') }}">
                                             @error('field_'.$field->id.'_other')<div class="text-danger mt-1">{{ $message }}</div>@enderror
                                         </div>
                                     @endif
@@ -106,10 +106,10 @@
                                     @if($field->option('allow_other'))
                                         <div class="form-check">
                                             <input class="form-check-input other-radio" type="radio" name="field_{{ $field->id }}" value="other" @checked(old('field_'.$field->id) === 'other') id="field_{{ $field->id }}_other_radio">
-                                            <label class="form-check-label" for="field_{{ $field->id }}_other_radio">Other</label>
+                                            <label class="form-check-label" for="field_{{ $field->id }}_other_radio">{{ trans('jobs::messages.other') }}</label>
                                         </div>
                                         <div class="mt-2 d-none other-input-wrap">
-                                            <input type="text" name="field_{{ $field->id }}_other" class="form-control" placeholder="Please specify..." value="{{ old('field_'.$field->id.'_other') }}">
+                                            <input type="text" name="field_{{ $field->id }}_other" class="form-control" placeholder="{{ trans('jobs::messages.other_placeholder') }}" value="{{ old('field_'.$field->id.'_other') }}">
                                             @error('field_'.$field->id.'_other')<div class="text-danger mt-1">{{ $message }}</div>@enderror
                                         </div>
                                     @endif

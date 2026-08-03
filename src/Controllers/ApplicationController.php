@@ -111,7 +111,7 @@ class ApplicationController extends Controller
                         'string',
                         'max:255'
                     ];
-                    $attributes[$otherKey] = $field->label . ' (Other)';
+                    $attributes[$otherKey] = $field->label . ' (' . trans('jobs::messages.other') . ')';
                 }
                 if (!empty($allowedOptions)) {
                     $fieldRules[] = 'in:' . implode(',', $allowedOptions);
@@ -127,14 +127,14 @@ class ApplicationController extends Controller
                         function ($attribute, $value, $fail) use ($request, $key) {
                             $choices = $request->input($key);
                             if (is_array($choices) && in_array('other', $choices) && empty($value)) {
-                                $fail('The other field is required when other is selected.');
+                                $fail(trans('jobs::messages.validation_other_required'));
                             }
                         },
                         'nullable',
                         'string',
                         'max:255'
                     ];
-                    $attributes[$otherKey] = $field->label . ' (Other)';
+                    $attributes[$otherKey] = $field->label . ' (' . trans('jobs::messages.other') . ')';
                 }
                 if (!empty($allowedOptions)) {
                     $rules[$key . '.*'] = ['in:' . implode(',', $allowedOptions)];

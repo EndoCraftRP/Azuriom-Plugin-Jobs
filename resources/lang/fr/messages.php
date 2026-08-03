@@ -61,6 +61,11 @@ return [
     'cancel_application' => 'Annuler ma candidature',
     'application_cancelled' => 'Ta candidature a été annulée.',
     'cancel_not_allowed' => 'Cette candidature ne peut plus être annulée.',
+    'other' => 'Autre',
+    'start_date' => 'Date de début',
+    'end_date' => 'Date de fin',
+    'other_placeholder' => 'Veuillez préciser...',
+    'validation_other_required' => 'Le champ "Autre" est obligatoire lorsque "Autre" est sélectionné.',
     'positions' => [
         'form' => [
             'name' => 'Nom',

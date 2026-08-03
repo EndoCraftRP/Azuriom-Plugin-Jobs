@@ -61,6 +61,11 @@ return [
     'cancel_application' => 'Cancel my application',
     'application_cancelled' => 'Your application has been cancelled.',
     'cancel_not_allowed' => 'This application can no longer be cancelled.',
+    'other' => 'Other',
+    'start_date' => 'Start Date',
+    'end_date' => 'End Date',
+    'other_placeholder' => 'Please specify...',
+    'validation_other_required' => 'The other field is required when other is selected.',
     'positions' => [
         'form' => [
             'name' => 'Name',
