@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('jobs_apply_fields', function (Blueprint $table) {
-            $table->string('type')->change();
+            $table->enum('type', ['text', 'textarea', 'number', 'select', 'checkbox', 'radio', 'date', 'date_range', 'html'])->change();
         });
     }
 
