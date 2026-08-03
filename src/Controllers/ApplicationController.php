@@ -456,7 +456,7 @@ class ApplicationController extends Controller
 
     public function downloadAttachment(Request $request, Application $application, string $filename)
     {
-        if (auth()->id() !== $application->user_id && !$request->user()?->can('jobs.manage')) {
+        if (auth()->id() !== $application->user_id && !$request->user()?->can('jobs.applications')) {
             abort(403);
         }
 
@@ -472,7 +472,7 @@ class ApplicationController extends Controller
 
     public function deleteAttachment(Request $request, Application $application, int $fieldId, int $index)
     {
-        if (auth()->id() !== $application->user_id && !$request->user()?->can('jobs.manage')) {
+        if (auth()->id() !== $application->user_id && !$request->user()?->can('jobs.applications')) {
             abort(403);
         }
 
