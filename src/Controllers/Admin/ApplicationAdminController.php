@@ -3,6 +3,7 @@
 namespace Azuriom\Plugin\Jobs\Controllers\Admin;
 
 use Azuriom\Http\Controllers\Controller;
+use Azuriom\Models\ActionLog;
 use Azuriom\Plugin\Jobs\Models\Application;
 use Azuriom\Plugin\Jobs\Models\Position;
 use Azuriom\Plugin\Jobs\Notifications\ApplicationStatusChanged;
@@ -41,13 +42,27 @@ class ApplicationAdminController extends Controller
 
     public function updateStatus(ApplicationStatusRequest $request, Application $application)
     {
+        $oldStatus = $application->status;
+        $oldAdminNote = $application->admin_note;
+        $oldPublicNote = $application->public_note;
+
+        $newStatus = $request->input('status');
+        $newAdminNote = $request->input('admin_note');
+        $newPublicNote = $request->input('public_note');
+
         $application->update([
-            'status' => $request->input('status'),
-            'admin_note' => $request->input('admin_note'),
-            'public_note' => $request->input('public_note'),
+            'status' => $newStatus,
+            'admin_note' => $newAdminNote,
+            'public_note' => $newPublicNote,
             'reviewed_by' => auth()->id(),
             'reviewed_at' => now(),
         ]);
+
+        if ($oldStatus !== $newStatus) {
+            ActionLog::log('jobs.applications.status', $application);
+        } elseif ($oldAdminNote !== $newAdminNote || $oldPublicNote !== $newPublicNote) {
+            ActionLog::log('jobs.applications.updated', $application);
+        }
 
         $application->load('position');
 

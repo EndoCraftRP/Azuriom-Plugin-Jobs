@@ -3,7 +3,9 @@
 namespace Azuriom\Plugin\Jobs\Providers;
 
 use Azuriom\Extensions\Plugin\BasePluginServiceProvider;
+use Azuriom\Models\ActionLog;
 use Azuriom\Models\Permission;
+use Azuriom\Plugin\Jobs\Models\Application;
 
 class JobsServiceProvider extends BasePluginServiceProvider
 {
@@ -15,6 +17,25 @@ class JobsServiceProvider extends BasePluginServiceProvider
         $this->registerRouteDescriptions();
         $this->registerAdminNavigation();
         $this->registerPermissions();
+        $this->registerLogs();
+    }
+
+    protected function registerLogs(): void
+    {
+        ActionLog::registerLogs([
+            'jobs.applications.status' => [
+                'icon' => 'arrow-repeat',
+                'color' => 'info',
+                'message' => 'jobs::messages.logs.applications.status',
+                'model' => Application::class,
+            ],
+            'jobs.applications.updated' => [
+                'icon' => 'pencil-square',
+                'color' => 'primary',
+                'message' => 'jobs::messages.logs.applications.updated',
+                'model' => Application::class,
+            ],
+        ]);
     }
 
     protected function routeDescriptions(): array
