@@ -135,4 +135,10 @@ return [
     'web_link' => 'Lien Web',
     'open_link' => 'Ouvrir le lien',
     'confirm_delete_attachment' => 'Es-tu sûr de vouloir supprimer cette pièce jointe ?',
+    'logs' => [
+        'applications' => [
+            'status' => 'A mis à jour le statut de la candidature n°:id en :status',
+            'updated' => 'A mis à jour la candidature n°:id',
+        ],
+    ],
 ];

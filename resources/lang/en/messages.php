@@ -135,4 +135,10 @@ return [
     'web_link' => 'Web Link',
     'open_link' => 'Open Link',
     'confirm_delete_attachment' => 'Are you sure you want to delete this attachment?',
+    'logs' => [
+        'applications' => [
+            'status' => 'Updated application #:id status to :status',
+            'updated' => 'Updated application #:id',
+        ],
+    ],
 ];
